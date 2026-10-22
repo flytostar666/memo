@@ -6,8 +6,8 @@
 
 从 GitHub Actions 的 `windows-packages` 构建产物中下载：
 
-- `Shiguang-Memo-Setup-1.0.0.exe`：安装版，可选择安装位置。
-- `Shiguang-Memo-Portable-1.0.0.exe`：免安装版，直接双击运行。
+- `Shiguang-Memo-Setup-1.0.1.exe`：安装版，可选择安装位置。
+- `Shiguang-Memo-Portable-1.0.1.exe`：免安装版，直接双击运行。
 
 当前版本不包含自动更新。
 

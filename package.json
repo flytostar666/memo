@@ -1,6 +1,6 @@
 {
   "name": "shiguang-memo",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "一个无需联网、只在本机保存的 Windows 备忘录。",
   "main": "main.js",
   "author": "flytostar666",
@@ -10,7 +10,7 @@
     "start": "electron .",
     "icon": "node scripts/generate-icon.js",
     "pack": "npm run icon && electron-builder --dir --win",
-    "dist:win": "npm run icon && electron-builder --win nsis portable"
+    "dist:win": "npm run icon && electron-builder --win nsis portable --publish never"
   },
   "devDependencies": {
     "electron": "^38.2.2",
