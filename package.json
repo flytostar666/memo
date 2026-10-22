@@ -1,7 +1,7 @@
 {
-  "name": "shiguang-memo",
-  "version": "1.0.1",
-  "description": "一个无需联网、只在本机保存的 Windows 备忘录。",
+  "name": "star-memo",
+  "version": "1.1.0",
+  "description": "一个带加密星匣、无需联网的 Windows 星空白备忘录。",
   "main": "main.js",
   "author": "flytostar666",
   "license": "UNLICENSED",
@@ -18,7 +18,7 @@
   },
   "build": {
     "appId": "com.flytostar.memo",
-    "productName": "拾光备忘录",
+    "productName": "star备忘录",
     "copyright": "Copyright © 2026 flytostar666",
     "asar": true,
     "directories": {
@@ -26,11 +26,12 @@
       "buildResources": "build"
     },
     "files": [
-      "app.js",
       "index.html",
       "main.js",
       "package.json",
-      "styles.css"
+      "preview-star.css",
+      "preview-star.html",
+      "preview-star.js"
     ],
     "win": {
       "icon": "build/icon.ico",
@@ -55,12 +56,12 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "拾光备忘录",
+      "shortcutName": "star备忘录",
       "deleteAppDataOnUninstall": false,
-      "artifactName": "Shiguang-Memo-Setup-${version}.${ext}"
+      "artifactName": "Star-Memo-Setup-${version}.${ext}"
     },
     "portable": {
-      "artifactName": "Shiguang-Memo-Portable-${version}.${ext}"
+      "artifactName": "Star-Memo-Portable-${version}.${ext}"
     }
   }
 }

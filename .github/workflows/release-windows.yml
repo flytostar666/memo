@@ -33,5 +33,5 @@ jobs:
         with:
           generate_release_notes: true
           files: |
-            release/Shiguang-Memo-Setup-*.exe
-            release/Shiguang-Memo-Portable-*.exe
+            release/Star-Memo-Setup-*.exe
+            release/Star-Memo-Portable-*.exe

@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="star备忘录：把你的每一个念想，收进浩瀚星河。"
+    />
+    <meta name="theme-color" content="#050716" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'"
+    />
+    <title>star备忘录</title>
+    <link rel="stylesheet" href="preview-star.css" />
+  </head>
+  <body>
+    <canvas id="star-canvas" aria-hidden="true"></canvas>
+    <div class="nebula nebula-one" aria-hidden="true"></div>
+    <div class="nebula nebula-two" aria-hidden="true"></div>
+    <div class="horizon-glow" aria-hidden="true"></div>
+
+    <div class="page-shell">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="star备忘录首页">
+          <span class="brand-emblem" aria-hidden="true">
+            <svg viewBox="0 0 48 48">
+              <path d="M24 4.5c1.4 11.2 7.5 17.4 18.8 18.8C31.5 24.7 25.4 30.9 24 42.1 22.6 30.9 16.5 24.7 5.2 23.3 16.5 21.9 22.6 15.7 24 4.5Z" />
+              <circle cx="37.5" cy="10.5" r="2.2" />
+              <circle cx="11" cy="37" r="1.4" />
+            </svg>
+          </span>
+          <span class="brand-copy">
+            <span class="brand-kicker">YOUR PRIVATE UNIVERSE</span>
+            <span class="brand-name">star备忘录</span>
+          </span>
+        </a>
+
+        <div class="topbar-actions">
+          <span class="local-status">
+            <span class="local-dot" aria-hidden="true"></span>
+            本地星河
+          </span>
+          <button
+            id="import-button"
+            class="icon-button"
+            type="button"
+            title="导入备份"
+            aria-label="导入备份"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 3v12M7 10l5 5 5-5M5 20h14" />
+            </svg>
+          </button>
+          <button
+            id="export-button"
+            class="icon-button"
+            type="button"
+            title="导出备份"
+            aria-label="导出备份"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M7 18H5.5A3.5 3.5 0 0 1 5 11.05 7 7 0 0 1 18.7 9.2 4.5 4.5 0 0 1 18.5 18H17M12 10v11M8.5 13.5 12 10l3.5 3.5" />
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <main>
+        <section class="hero" aria-labelledby="hero-title">
+          <div class="hero-copy">
+            <p class="eyebrow">
+              <span aria-hidden="true">✦</span>
+              PERSONAL CONSTELLATION
+            </p>
+            <h1 id="hero-title">把今天，<br /><em>写进星河。</em></h1>
+            <p class="hero-description">
+              每一个念想，都是宇宙里独一无二的星光。<br />
+              安静记录，随时找回。
+            </p>
+            <div class="hero-actions">
+              <button id="hero-add-button" class="primary-button" type="button">
+                <span>记录此刻</span>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
+              </button>
+              <span class="hero-privacy">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="6" y="10" width="12" height="10" rx="3" />
+                  <path d="M9 10V7a3 3 0 0 1 6 0v3" />
+                </svg>
+                数据只留在此设备
+              </span>
+            </div>
+          </div>
+
+          <div class="constellation" aria-hidden="true">
+            <div class="orbit orbit-outer"></div>
+            <div class="orbit orbit-inner"></div>
+            <span class="orbit-star orbit-star-one"></span>
+            <span class="orbit-star orbit-star-two"></span>
+            <span class="orbit-star orbit-star-three"></span>
+            <div class="constellation-core">
+              <span class="core-star">✦</span>
+              <strong id="total-count">0</strong>
+              <small>颗星光</small>
+            </div>
+          </div>
+        </section>
+
+        <section class="workspace" aria-labelledby="records-title">
+          <div class="category-bar" role="tablist" aria-label="记录分类">
+            <button
+              class="category-tab is-active"
+              type="button"
+              role="tab"
+              aria-selected="true"
+              data-filter="all"
+            >
+              <span class="tab-icon" aria-hidden="true">✦</span>
+              <span>全部</span>
+              <span class="tab-count" data-count-for="all">0</span>
+            </button>
+            <button
+              class="category-tab"
+              type="button"
+              role="tab"
+              aria-selected="false"
+              data-filter="memo"
+            >
+              <span class="tab-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M6 3.5h9l3 3v14H6zM15 3.5v4h4M9 11h6M9 15h5" />
+                </svg>
+              </span>
+              <span>备忘录</span>
+              <span class="tab-count" data-count-for="memo">0</span>
+            </button>
+            <button
+              class="category-tab"
+              type="button"
+              role="tab"
+              aria-selected="false"
+              data-filter="encrypted"
+            >
+              <span class="tab-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <rect x="5" y="10" width="14" height="11" rx="3" />
+                  <path d="M8.5 10V7.5a3.5 3.5 0 0 1 7 0V10M12 14v3" />
+                </svg>
+              </span>
+              <span>加密</span>
+              <span class="tab-count" data-count-for="encrypted">0</span>
+            </button>
+            <button
+              class="category-tab"
+              type="button"
+              role="tab"
+              aria-selected="false"
+              data-filter="trash"
+            >
+              <span class="tab-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M5 7h14M9 7V4h6v3M8 10v9M12 10v9M16 10v9M6.5 7l1 13h9l1-13" />
+                </svg>
+              </span>
+              <span>回收站</span>
+              <span class="tab-count" data-count-for="trash">0</span>
+            </button>
+          </div>
+
+          <div
+            id="vault-mode-selector"
+            class="vault-mode-selector"
+            role="tablist"
+            aria-label="加密记录类型"
+            hidden
+          >
+            <button
+              class="vault-mode-button is-active"
+              type="button"
+              role="tab"
+              aria-selected="true"
+              data-vault-mode="password"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="8" cy="12" r="3.2" />
+                <path d="M11.2 12H21M17 12v3M20 12v2" />
+              </svg>
+              密码记录
+              <span id="password-mode-count">0</span>
+            </button>
+            <button
+              class="vault-mode-button"
+              type="button"
+              role="tab"
+              aria-selected="false"
+              data-vault-mode="note"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M6 3.5h9l3 3v14H6zM15 3.5v4h4M9 11h6M9 15h5" />
+                <rect x="4" y="17" width="5" height="4" rx="1" />
+              </svg>
+              加密备忘
+              <span id="secure-note-mode-count">0</span>
+            </button>
+          </div>
+
+          <div class="workspace-heading">
+            <div class="section-title">
+              <span class="title-star" aria-hidden="true">✦</span>
+              <div>
+                <p class="section-kicker">MY CONSTELLATION</p>
+                <h2 id="records-title">全部记录</h2>
+              </div>
+            </div>
+            <div class="list-tools">
+              <label class="search-box" for="search-input">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="10.5" cy="10.5" r="6.5" />
+                  <path d="m15.5 15.5 4.5 4.5" />
+                </svg>
+                <input
+                  id="search-input"
+                  type="search"
+                  placeholder="搜索星光记录"
+                  autocomplete="off"
+                />
+              </label>
+              <button
+                id="reset-vault-password-button"
+                class="vault-lock-button"
+                type="button"
+                hidden
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="8" cy="12" r="3.2" />
+                  <path d="M11.2 12H21M17 12v3M20 12v2" />
+                </svg>
+                重置密码
+              </button>
+              <button
+                id="lock-vault-button"
+                class="vault-lock-button"
+                type="button"
+                hidden
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="5" y="10" width="14" height="11" rx="3" />
+                  <path d="M8.5 10V7.5a3.5 3.5 0 0 1 7 0V10" />
+                </svg>
+                锁定
+              </button>
+              <button id="clear-trash-button" class="text-button" type="button" hidden>
+                清空回收站
+              </button>
+            </div>
+          </div>
+
+          <div id="demo-banner" class="demo-banner" hidden>
+            <span>这些是用于展示布局的示例记录。</span>
+            <button id="clear-demo-button" type="button">清空示例，开始记录</button>
+          </div>
+
+          <div id="note-grid" class="note-grid" aria-live="polite"></div>
+
+          <div id="empty-state" class="empty-state" hidden>
+            <span class="empty-orbit" aria-hidden="true">
+              <span class="empty-star">✦</span>
+            </span>
+            <h3 id="empty-title">这片星空还没有记录</h3>
+            <p id="empty-description">写下第一条备忘，让在这里留下一颗属于你的星。</p>
+            <button id="empty-add-button" class="secondary-button" type="button">
+              写下第一颗星
+            </button>
+          </div>
+        </section>
+      </main>
+
+      <footer>
+        <span>star备忘录</span>
+        <span aria-hidden="true">✦</span>
+        <span>让记忆在星河里发光</span>
+      </footer>
+    </div>
+
+    <button id="floating-add-button" class="floating-add" type="button">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M15.8 4.7 19.3 8.2M5 19l1.2-4.8L16.7 3.7a1.8 1.8 0 0 1 2.6 0l1 1a1.8 1.8 0 0 1 0 2.6L9.8 17.8 5 19Z" />
+        <path d="m14.9 5.5 3.6 3.6" />
+      </svg>
+      <span>记录</span>
+    </button>
+
+    <dialog id="vault-auth-dialog" class="editor-dialog vault-auth-dialog">
+      <form id="vault-auth-form">
+        <div class="vault-auth-emblem" aria-hidden="true">
+          <svg viewBox="0 0 32 32">
+            <path d="M16 2.8c.9 7.3 4.9 11.3 12.2 12.2C20.9 15.9 16.9 19.9 16 27.2 15.1 19.9 11.1 15.9 3.8 15 11.1 14.1 15.1 10.1 16 2.8Z" />
+            <circle cx="24.5" cy="6.5" r="1.5" />
+          </svg>
+        </div>
+        <div class="vault-auth-heading">
+          <p class="section-kicker">PRIVATE CONSTELLATION</p>
+          <h2 id="vault-auth-title">解锁加密星匣</h2>
+          <p id="vault-auth-description">
+            输入 6 位密码，查看保存在这里的私密记录。
+          </p>
+        </div>
+
+        <label class="vault-pin-label" for="vault-pin">6 位访问密码</label>
+        <div class="vault-pin-wrap">
+          <input
+            id="vault-pin"
+            type="password"
+            inputmode="numeric"
+            pattern="[0-9]{6}"
+            maxlength="6"
+            minlength="6"
+            autocomplete="off"
+            spellcheck="false"
+            placeholder="••••••"
+            required
+          />
+          <button
+            id="toggle-vault-pin"
+            class="pin-visibility-button"
+            type="button"
+            aria-label="显示或隐藏密码"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3 12s3.2-5 9-5 9 5 9 5-3.2 5-9 5-9-5-9-5Z" />
+              <circle cx="12" cy="12" r="2.4" />
+            </svg>
+          </button>
+        </div>
+
+        <div id="vault-pin-confirm-group" class="vault-confirm-group" hidden>
+          <label class="vault-pin-label" for="vault-pin-confirm">再次输入密码</label>
+          <div class="vault-pin-wrap">
+            <input
+              id="vault-pin-confirm"
+              type="password"
+              inputmode="numeric"
+              pattern="[0-9]{6}"
+              maxlength="6"
+              minlength="6"
+              autocomplete="off"
+              spellcheck="false"
+              placeholder="••••••"
+            />
+          </div>
+        </div>
+
+        <p id="vault-auth-error" class="vault-auth-error" role="alert" hidden></p>
+        <p id="vault-auth-note" class="vault-auth-note">
+          密码不会被明文保存。忘记密码后，已加密的数据无法恢复。
+        </p>
+
+        <div class="dialog-actions">
+          <button id="cancel-vault-auth" class="ghost-button" type="button">
+            取消
+          </button>
+          <button id="vault-auth-submit" class="primary-button" type="submit">
+            <span id="vault-auth-submit-label">解锁星匣</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
+          </button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="vault-reset-dialog" class="editor-dialog vault-auth-dialog vault-reset-dialog">
+      <form id="vault-reset-form">
+        <div class="vault-auth-emblem" aria-hidden="true">
+          <svg viewBox="0 0 32 32">
+            <circle cx="11" cy="16" r="4.5" />
+            <path d="M15.5 16H28M23 16v4M27 16v3" />
+          </svg>
+        </div>
+        <div class="vault-auth-heading">
+          <p class="section-kicker">ROTATE THE SECRET KEY</p>
+          <h2>重置加密密码</h2>
+          <p>验证原密码后，所有加密记录都会使用新密码重新加密。</p>
+        </div>
+
+        <label class="vault-pin-label" for="current-vault-pin">原密码</label>
+        <div class="vault-pin-wrap">
+          <input
+            id="current-vault-pin"
+            type="password"
+            inputmode="numeric"
+            pattern="[0-9]{6}"
+            maxlength="6"
+            minlength="6"
+            autocomplete="off"
+            spellcheck="false"
+            placeholder="••••••"
+            required
+          />
+        </div>
+
+        <div class="vault-confirm-group">
+          <label class="vault-pin-label" for="new-vault-pin">新密码</label>
+          <div class="vault-pin-wrap">
+            <input
+              id="new-vault-pin"
+              type="password"
+              inputmode="numeric"
+              pattern="[0-9]{6}"
+              maxlength="6"
+              minlength="6"
+              autocomplete="off"
+              spellcheck="false"
+              placeholder="••••••"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="vault-confirm-group">
+          <label class="vault-pin-label" for="confirm-vault-pin">再次输入新密码</label>
+          <div class="vault-pin-wrap">
+            <input
+              id="confirm-vault-pin"
+              type="password"
+              inputmode="numeric"
+              pattern="[0-9]{6}"
+              maxlength="6"
+              minlength="6"
+              autocomplete="off"
+              spellcheck="false"
+              placeholder="••••••"
+              required
+            />
+          </div>
+        </div>
+
+        <p id="vault-reset-error" class="vault-auth-error" role="alert" hidden></p>
+        <p class="vault-auth-note">
+          改密过程中不会解密到磁盘。请确认新密码安全保管，忘记后无法恢复。
+        </p>
+
+        <div class="dialog-actions">
+          <button id="cancel-vault-reset" class="ghost-button" type="button">
+            取消
+          </button>
+          <button id="vault-reset-submit" class="primary-button" type="submit">
+            <span id="vault-reset-submit-label">更新密码</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
+          </button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="editor-dialog" class="editor-dialog">
+      <form id="editor-form">
+        <div class="dialog-heading">
+          <div>
+            <p class="section-kicker">WRITE INTO THE STARS</p>
+            <h2 id="editor-title">记录此刻</h2>
+          </div>
+          <button
+            id="close-editor-button"
+            class="dialog-close"
+            type="button"
+            aria-label="关闭编辑窗口"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m6 6 12 12M18 6 6 18" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="note-editor-fields">
+          <label class="field-group" for="note-title-input">
+            <span>标题</span>
+            <input
+              id="note-title-input"
+              type="text"
+              maxlength="120"
+              placeholder="给这条记录起一个名字"
+              required
+            />
+          </label>
+          <label class="field-group" for="note-content">
+            <span>内容</span>
+            <textarea
+              id="note-content"
+              rows="7"
+              maxlength="5000"
+              placeholder="写下事件、想法或需要记住的细节，可以分行记录。"
+            ></textarea>
+          </label>
+        </div>
+
+        <div class="editor-bottom">
+          <fieldset class="category-picker">
+            <legend class="sr-only">选择分类</legend>
+            <label class="category-option">
+              <input type="radio" name="note-category" value="memo" checked />
+              <span>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M6 3.5h9l3 3v14H6zM15 3.5v4h4M9 11h6M9 15h5" />
+                </svg>
+                备忘录
+              </span>
+            </label>
+          </fieldset>
+          <span id="editor-character-count" class="character-count">0 / 5000</span>
+        </div>
+
+        <p class="editor-privacy">
+          记录保存在当前浏览器本地，不会上传网络。
+        </p>
+
+        <div class="dialog-actions">
+          <button id="cancel-editor-button" class="ghost-button" type="button">
+            取消
+          </button>
+          <button class="primary-button" type="submit">
+            <span id="save-note-label">收进星河</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
+          </button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="password-editor-dialog" class="editor-dialog password-editor-dialog">
+      <form id="password-editor-form">
+        <div class="dialog-heading">
+          <div>
+            <p class="section-kicker">LOCKED IN THE STARS</p>
+            <h2 id="password-editor-title">新增密码记录</h2>
+          </div>
+          <button
+            id="close-password-editor"
+            class="dialog-close"
+            type="button"
+            aria-label="关闭密码编辑窗口"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m6 6 12 12M18 6 6 18" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="password-fields">
+          <label class="field-group">
+            <span>名称</span>
+            <input
+              id="password-title"
+              type="text"
+              maxlength="120"
+              placeholder="例如：邮箱、银行卡、会员账号"
+              required
+            />
+          </label>
+          <label class="field-group">
+            <span>账号或用户名</span>
+            <input
+              id="password-account"
+              type="text"
+              maxlength="200"
+              autocomplete="off"
+              placeholder="可选"
+            />
+          </label>
+          <label class="field-group">
+            <span>密码</span>
+            <div class="password-input-wrap">
+              <input
+                id="password-value"
+                type="password"
+                maxlength="500"
+                autocomplete="new-password"
+                spellcheck="false"
+                placeholder="输入需要加密保存的密码"
+                required
+              />
+              <button
+                id="toggle-password-value"
+                class="pin-visibility-button"
+                type="button"
+                aria-label="显示或隐藏密码"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M3 12s3.2-5 9-5 9 5 9 5-3.2 5-9 5-9-5-9-5Z" />
+                  <circle cx="12" cy="12" r="2.4" />
+                </svg>
+              </button>
+            </div>
+          </label>
+          <label class="field-group">
+            <span>备注</span>
+            <textarea
+              id="password-notes"
+              rows="3"
+              maxlength="2000"
+              placeholder="例如：用途、安全问题答案提示（不要填写答案）"
+            ></textarea>
+          </label>
+        </div>
+
+        <p id="password-editor-privacy" class="editor-privacy">
+          内容会使用 AES-GCM 加密后保存，离开分类或自动锁定后需要重新输入密码。
+        </p>
+
+        <div class="dialog-actions">
+          <button id="cancel-password-editor" class="ghost-button" type="button">
+            取消
+          </button>
+          <button class="primary-button" type="submit">
+            <span id="save-password-label">加密保存</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6 10V7.5a3 3 0 0 1 6 0v2.5M5 10h8v8H5z" />
+            </svg>
+          </button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="secure-note-editor-dialog" class="editor-dialog">
+      <form id="secure-note-editor-form">
+        <div class="dialog-heading">
+          <div>
+            <p class="section-kicker">ENCRYPTED MEMORY</p>
+            <h2 id="secure-note-editor-title">新增加密备忘</h2>
+          </div>
+          <button
+            id="close-secure-note-editor"
+            class="dialog-close"
+            type="button"
+            aria-label="关闭加密备忘编辑窗口"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m6 6 12 12M18 6 6 18" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="note-editor-fields">
+          <label class="field-group" for="secure-note-title">
+            <span>标题</span>
+            <input
+              id="secure-note-title"
+              type="text"
+              maxlength="120"
+              placeholder="给这条加密记录起一个名字"
+              required
+            />
+          </label>
+          <label class="field-group" for="secure-note-content">
+            <span>内容</span>
+            <textarea
+              id="secure-note-content"
+              rows="8"
+              maxlength="8000"
+              placeholder="写下需要加密保存的用户记录，可以分行输入。"
+            ></textarea>
+          </label>
+        </div>
+
+        <p class="editor-privacy">
+          标题和正文都会使用 AES-GCM 加密后保存，离开加密分类后需要重新输入密码。
+        </p>
+
+        <div class="dialog-actions">
+          <button id="cancel-secure-note-editor" class="ghost-button" type="button">
+            取消
+          </button>
+          <button class="primary-button" type="submit">
+            <span id="save-secure-note-label">加密保存</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6 10V7.5a3 3 0 0 1 6 0v2.5M5 10h8v8H5z" />
+            </svg>
+          </button>
+        </div>
+      </form>
+    </dialog>
+
+    <template id="note-template">
+      <article class="note-card">
+        <div class="note-card-top">
+          <div class="note-badge-row">
+            <span class="note-badge">
+              <svg class="badge-lock" viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="5" y="10" width="14" height="11" rx="3" />
+                <path d="M8.5 10V7.5a3.5 3.5 0 0 1 7 0V10M12 14v3" />
+              </svg>
+              <span class="badge-text"></span>
+            </span>
+            <span class="demo-label" hidden>示例</span>
+          </div>
+          <button class="card-icon-button pin-button" data-action="pin" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m12 3 2.7 5.7 6.3.9-4.6 4.4 1.1 6.3-5.5-3-5.5 3 1.1-6.3L3 9.6l6.3-.9L12 3Z" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="note-copy">
+          <h3 class="note-title"></h3>
+          <p class="note-body"></p>
+        </div>
+
+        <div class="note-footer">
+          <div class="note-date">
+            <time class="note-time"></time>
+            <span class="edited-label" hidden>已编辑</span>
+          </div>
+          <div class="note-actions">
+            <button class="card-action edit-action" data-action="edit" type="button">
+              编辑
+            </button>
+            <button class="card-action copy-action" data-action="copy" type="button">
+              复制
+            </button>
+            <button class="card-action restore-action" data-action="restore" type="button" hidden>
+              恢复
+            </button>
+            <button class="card-action danger-action" data-action="delete" type="button">
+              删除
+            </button>
+          </div>
+        </div>
+      </article>
+    </template>
+
+    <template id="vault-template">
+      <article class="note-card password-card">
+        <div class="note-card-top">
+          <div class="note-badge-row">
+            <span class="note-badge encrypted-badge">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="5" y="10" width="14" height="11" rx="3" />
+                <path d="M8.5 10V7.5a3.5 3.5 0 0 1 7 0V10M12 14v3" />
+              </svg>
+              已加密
+            </span>
+          </div>
+          <button
+            class="card-icon-button"
+            data-vault-action="edit"
+            type="button"
+            aria-label="编辑密码记录"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M15.8 4.7 19.3 8.2M5 19l1.2-4.8L16.7 3.7a1.8 1.8 0 0 1 2.6 0l1 1a1.8 1.8 0 0 1 0 2.6L9.8 17.8 5 19Z" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="note-copy password-copy">
+          <h3 class="password-title"></h3>
+          <p class="password-account"></p>
+          <div class="secret-row">
+            <span class="secret-value">••••••••••</span>
+            <button class="secret-button reveal-secret" data-vault-action="reveal" type="button">
+              显示
+            </button>
+            <button class="secret-button copy-secret" data-vault-action="copy-password" type="button">
+              复制密码
+            </button>
+          </div>
+          <p class="password-notes"></p>
+        </div>
+
+        <div class="note-footer">
+          <time class="password-date"></time>
+          <div class="note-actions">
+            <button class="card-action edit-action" data-vault-action="edit" type="button">
+              编辑
+            </button>
+            <button class="card-action danger-action" data-vault-action="delete" type="button">
+              删除
+            </button>
+          </div>
+        </div>
+      </article>
+    </template>
+
+    <template id="secure-note-template">
+      <article class="note-card secure-note-card">
+        <div class="note-card-top">
+          <div class="note-badge-row">
+            <span class="note-badge encrypted-badge">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="5" y="10" width="14" height="11" rx="3" />
+                <path d="M8.5 10V7.5a3.5 3.5 0 0 1 7 0V10M12 14v3" />
+              </svg>
+              加密备忘
+            </span>
+          </div>
+          <button
+            class="card-icon-button"
+            data-vault-action="edit"
+            type="button"
+            aria-label="编辑加密备忘"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M15.8 4.7 19.3 8.2M5 19l1.2-4.8L16.7 3.7a1.8 1.8 0 0 1 2.6 0l1 1a1.8 1.8 0 0 1 0 2.6L9.8 17.8 5 19Z" />
+            </svg>
+          </button>
+        </div>
+        <div class="note-copy secure-note-copy">
+          <h3 class="secure-note-title"></h3>
+          <p class="secure-note-body"></p>
+        </div>
+        <div class="note-footer">
+          <time class="secure-note-date"></time>
+          <div class="note-actions">
+            <button class="card-action edit-action" data-vault-action="edit" type="button">
+              编辑
+            </button>
+            <button class="card-action danger-action" data-vault-action="delete" type="button">
+              删除
+            </button>
+          </div>
+        </div>
+      </article>
+    </template>
+
+    <input
+      id="import-file"
+      class="sr-only"
+      type="file"
+      accept="application/json,.json"
+      tabindex="-1"
+    />
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <script src="preview-star.js" defer></script>
+  </body>
+</html>
