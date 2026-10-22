@@ -15,8 +15,8 @@
 
 从 GitHub Releases 下载：
 
-- `Star-Memo-Setup-1.1.0.exe`：安装版，可选择安装位置。
-- `Star-Memo-Portable-1.1.0.exe`：免安装版，直接双击运行。
+- `Star-Memo-Setup-1.1.1.exe`：安装版，可选择安装位置。
+- `Star-Memo-Portable-1.1.1.exe`：免安装版，直接双击运行。
 
 当前版本不包含自动更新。
 
@@ -24,8 +24,8 @@
 Release：
 
 ```powershell
-git tag v1.1.0
-git push origin v1.1.0
+git tag v1.1.1
+git push origin v1.1.1
 ```
 
 ## 本地开发

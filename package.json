@@ -1,6 +1,6 @@
 {
   "name": "star-memo",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "一个带加密星匣、无需联网的 Windows 星空白备忘录。",
   "main": "main.js",
   "author": "flytostar666",
