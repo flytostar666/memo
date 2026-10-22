@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="一个无需联网、可分行记录的本地备忘录。"
+    />
+    <title>拾光备忘录</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="site-header">
+        <div class="brand" aria-label="拾光备忘录">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img">
+              <path d="M6 3.75h9.5A2.5 2.5 0 0 1 18 6.25v14l-6-3-6 3v-14A2.25 2.25 0 0 1 6 3.75Z" />
+              <path d="M9 8h6M9 11h4" />
+            </svg>
+          </span>
+          <div>
+            <h1>拾光备忘录</h1>
+            <p>把此刻需要记住的事，轻轻放下。</p>
+          </div>
+        </div>
+        <span class="local-badge">
+          <span class="status-dot" aria-hidden="true"></span>
+          仅保存在本机
+        </span>
+      </header>
+
+      <main>
+        <section class="composer" aria-labelledby="composer-title">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">NEW NOTE</p>
+              <h2 id="composer-title">记下一件事</h2>
+            </div>
+            <time id="today-label" class="today-label"></time>
+          </div>
+
+          <form id="note-form">
+            <label class="sr-only" for="note-input">备忘录内容</label>
+            <textarea
+              id="note-input"
+              name="content"
+              rows="6"
+              maxlength="5000"
+              placeholder="例如：&#10;10:30 项目会议，带上笔记本&#10;下班前给妈妈回电话"
+              required
+            ></textarea>
+            <div class="composer-footer">
+              <p class="privacy-hint">
+                内容不会上传网络，但会以未加密形式保存在此浏览器中。请勿存放重要密码。
+              </p>
+              <div class="composer-actions">
+                <span id="character-count" class="character-count">0 / 5000</span>
+                <button type="submit" class="primary-button">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 5v14M5 12h14" />
+                  </svg>
+                  添加记录
+                </button>
+              </div>
+            </div>
+          </form>
+        </section>
+
+        <section class="notes-section" aria-labelledby="notes-title">
+          <div class="notes-heading">
+            <div>
+              <p class="eyebrow">YOUR NOTES</p>
+              <h2 id="notes-title">我的记录</h2>
+            </div>
+            <div class="notes-tools">
+              <span id="note-count" class="note-count">0 条记录</span>
+              <button id="clear-all" class="text-button" type="button" hidden>
+                清空全部
+              </button>
+            </div>
+          </div>
+
+          <div id="empty-state" class="empty-state">
+            <span class="empty-illustration" aria-hidden="true">
+              <svg viewBox="0 0 64 64">
+                <path d="M17 12h24l8 8v32H17z" />
+                <path d="M41 12v9h8M24 29h18M24 36h18M24 43h12" />
+                <circle cx="12" cy="20" r="3" />
+                <circle cx="52" cy="43" r="2" />
+              </svg>
+            </span>
+            <h3>这里还静悄悄的</h3>
+            <p>写下一段文字，第一条记录就会出现在这里。</p>
+          </div>
+
+          <div id="note-list" class="note-list" aria-live="polite"></div>
+        </section>
+      </main>
+
+      <footer>
+        <span>拾光备忘录</span>
+        <span aria-hidden="true">·</span>
+        <span>只记录，不打扰</span>
+      </footer>
+    </div>
+
+    <template id="note-template">
+      <article class="note-card">
+        <div class="note-card-header">
+          <div class="note-meta">
+            <time class="note-time"></time>
+            <span class="note-date"></span>
+          </div>
+          <button class="delete-button" type="button" aria-label="删除这条记录">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M5 7h14M9 7V4h6v3M8 10v8M12 10v8M16 10v8M6.5 7l1 13h9l1-13" />
+            </svg>
+          </button>
+        </div>
+        <p class="note-content"></p>
+      </article>
+    </template>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <script src="app.js" defer></script>
+  </body>
+</html>
